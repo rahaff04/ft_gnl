@@ -6,21 +6,24 @@
 /*   By: ralamair <ralamair@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 08:58:16 by ralamair          #+#    #+#             */
-/*   Updated: 2025/09/21 13:32:32 by ralamair         ###   ########.fr       */
+/*   Updated: 2025/09/28 11:06:56 by ralamair         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t  ft_strlen(char *s)
+size_t	ft_strlen(char *s)
 {
-    size_t  i;
+	size_t	i;
 
-    i = 0;
-    while (s[i] != '\0')
-        i++;
-    return (i); 
+	if (!s)
+		return (0);
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	return (i);
 }
+
 char	*ft_strchr(const char *s, int c)
 {
 	char	x;
@@ -84,7 +87,7 @@ char	*ft_strdup(char *s)
 	return (str);
 }
 
-char	*ft_strjoin(char  *s1, char  *s2)
+char	*ft_strjoin(const char *s1, const char *s2)
 {
 	char	*str;
 	size_t	i;
