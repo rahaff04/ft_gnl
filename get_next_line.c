@@ -1,44 +1,32 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ralamair <ralamair@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/25 09:31:01 by ralamair          #+#    #+#             */
-/*   Updated: 2025/09/28 14:25:00 by ralamair         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
 
 char	*freee(char *str)
 {
 	free(str);
-	str = NULL;
-	return (str);
+	return (NULL);
 }
 
-char	*read_toleft(int fd, char *leftstr, int bytes)
+char	*read_toleft(int fd, char *leftstr)
 {
 	char	*buff;
 	char	*tmp;
+	ssize_t	bytes;
 
+	bytes = 1;
 	if (!leftstr)
 		leftstr = ft_strdup("");
 	buff = malloc(BUFFER_SIZE + 1);
 	if (!buff)
 		return (freee(leftstr));
-	while (!ft_strchr(leftstr, '\n') && bytes > 2)
+	while (!ft_strchr(leftstr, '\n') && bytes > 0)
 	{
 		bytes = read(fd, buff, BUFFER_SIZE);
 		if (bytes < 0)
-		{
-			free(leftstr);
-			return (freee(buff));
-		}
+			return (freee(buff), freee(leftstr));
 		buff[bytes] = '\0';
 		tmp = ft_strjoin(leftstr, buff);
+		if (!tmp)
+			return (freee(buff), freee(leftstr));
 		free(leftstr);
 		leftstr = tmp;
 	}
@@ -51,19 +39,16 @@ char	*gettline(char *leftstr)
 	size_t	i;
 	char	*line;
 
-	if (!leftstr)
-		return (NULL);
 	i = 0;
-	while (leftstr[i])
-	{
+	if (!leftstr || !*leftstr)
+		return (NULL);
+	while (leftstr[i] && leftstr[i] != '\n')
 		i++;
-		if (leftstr[i] == '\n')
-			break ;
-	}
-	i++;
+	if (leftstr[i] == '\n')
+		i++;
 	line = malloc(i + 1);
 	if (!line)
-		return (freee(leftstr));
+		return (NULL);
 	ft_strlcpy(line, leftstr, i + 1);
 	return (line);
 }
@@ -74,19 +59,13 @@ char	*newleftstr(char *leftstr)
 	char	*newstr;
 
 	i = 0;
-	while (leftstr[i])
-	{
-		if (leftstr[i] == '\n')
-		{
-			i++;
-			break ;
-		}
+	if (!leftstr)
+		return (NULL);
+	while (leftstr[i] && leftstr[i] != '\n')
 		i++;
-	}
 	if (!leftstr[i])
 		return (freee(leftstr));
-	i++;
-	newstr = ft_strdup(leftstr + i);
+	newstr = ft_strdup(leftstr + i + 1);
 	free(leftstr);
 	return (newstr);
 }
@@ -98,30 +77,12 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	leftstr = read_toleft(fd, leftstr, 1);
-	if (!leftstr || leftstr[0] == '\0')
-		return (freee(leftstr));
+	leftstr = read_toleft(fd, leftstr);
+	if (!leftstr)
+		return (NULL);
 	line = gettline(leftstr);
 	if (!line)
-		return (line);
+		return (freee(leftstr));
 	leftstr = newleftstr(leftstr);
 	return (line);
-}
-
-int	main(void)
- {
-	int		fd;
-	char	*line;
-
-	fd = open("rahaf.txt", O_RDONLY);
-	line = get_next_line(0);
-	while (line)
-	{
-		printf("%s", line);
-		free(line);
-		line = get_next_line(0);
-	}
-	free(line);
-	close(0);
-	return (0);
 }
