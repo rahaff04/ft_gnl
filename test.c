@@ -1,17 +1,24 @@
-/*#include "get_next_line.h"
+#include "get_next_line.h"
+#include <stdio.h>
 
-int main ()
+int	main(void)
 {
-    int fd = open("rahaf.txt", O_RDONLY);
-    if (fd < 0)
-    {
-        printf ("open error ");
-        return (1);
-    }
-    char *s = malloc (BUFFER_SIZE + 1);
-    int by = read (fd, s, BUFFER_SIZE);
-    printf ("%d\n", by);
-    printf ("%s",s);
+	int		fd;
+	char	*line;
 
-    return (0);
-}*/
+	fd = open("rahaf.txt", O_RDONLY);
+	if (fd < 0)
+	{
+		printf("Error");
+		return (1);
+	}
+
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line);
+		free(line);
+	}
+
+	close(fd);
+	return (0);
+}

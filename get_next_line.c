@@ -22,11 +22,17 @@ char	*read_toleft(int fd, char *leftstr)
 	{
 		bytes = read(fd, buff, BUFFER_SIZE);
 		if (bytes < 0)
-			return (freee(buff), freee(leftstr));
+		{
+			free(buff);
+			return (freee(leftstr));
+		}
 		buff[bytes] = '\0';
 		tmp = ft_strjoin(leftstr, buff);
 		if (!tmp)
-			return (freee(buff), freee(leftstr));
+		{
+			free(buff);
+			return (freee(leftstr));
+		}
 		free(leftstr);
 		leftstr = tmp;
 	}
@@ -82,7 +88,11 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line = gettline(leftstr);
 	if (!line)
-		return (freee(leftstr));
+	{
+		free(leftstr);
+		leftstr = NULL;
+		return (NULL);
+	}
 	leftstr = newleftstr(leftstr);
 	return (line);
 }
